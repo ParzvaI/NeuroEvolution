@@ -12,12 +12,15 @@ test_loader = DataLoader(test_dataset, batch_size=batch_size)
 def calc():
     all_correct_num = 0
     all_sample_num = 0
+    model=torch.load("mnist_0.97720.pkl")
+    model = model.to("cpu")
     model.eval()
     t_ls=[]
     fps_ls=[]
     for idx, (test_x, test_label) in enumerate(test_loader):
+        test_x = test_x.to('cpu')
         start = time.time()
-        predict_y = model(test_x.float()).detach()
+        predict_y = model(test_x.float()).cpu().detach()
         end = time.time()
         total_time = (end - start)
         if total_time!=0:
@@ -33,6 +36,5 @@ def calc():
     avg_time=t/len(t_ls)
     acc = all_correct_num / all_sample_num
     return t,avg_time,fps,acc
-model=torch.load("mnist_0.97720.pkl")
 a=calc()
 print("FPS :",a[2]," Acc :",a[3])
